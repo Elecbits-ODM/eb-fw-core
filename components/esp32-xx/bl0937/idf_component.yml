@@ -1,0 +1,28 @@
+version: "1.0.0"
+description: >-
+  BL0937 single-phase energy metering IC driver for ESP-IDF 5.x.
+  Hardware pulse counting (PCNT) with GPIO ISR fallback, SEL time-multiplexing
+  for voltage/current, and datasheet-based conversion to V / A / W / Wh.
+url: https://github.com/elecbitstech/EB_BL0937
+repository: https://github.com/elecbitstech/EB_BL0937.git
+issues: https://github.com/elecbitstech/EB_BL0937/issues
+documentation: https://github.com/elecbitstech/EB_BL0937#readme
+license: MIT
+maintainers:
+  - Ayesha Sheik <sheik.ayesha@elecbits.in>
+tags:
+  - energy
+  - metering
+  - bl0937
+  - power
+  - pcnt
+dependencies:
+  idf: ">=5.0"
+targets:
+  - esp32
+  - esp32s2
+  - esp32s3
+  - esp32c2
+  - esp32c3
+  - esp32c6
+  - esp32h2

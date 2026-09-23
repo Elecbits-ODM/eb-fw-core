@@ -1,0 +1,129 @@
+menu "BL0937 Energy Meter"
+
+    config BL0937_ENABLE
+        bool "Enable BL0937 driver defaults"
+        default y
+        help
+            Enables the Kconfig-backed defaults returned by
+            bl0937_config_default(). Disable this if you populate
+            bl0937_config_t entirely from your own code (for example from
+            per-unit calibration stored in NVS), in which case
+            bl0937_config_default() returns built-in fallback values.
+
+    if BL0937_ENABLE
+
+    menu "Pin Assignment"
+
+        config BL0937_CF_GPIO
+            int "CF GPIO (pulse input)"
+            default 34 if IDF_TARGET_ESP32
+            default 19
+            range 0 48
+            help
+                BL0937 CF output -> ESP input (active power pulse).
+
+        config BL0937_CF1_GPIO
+            int "CF1 GPIO (pulse input)"
+            default 35 if IDF_TARGET_ESP32
+            default 6
+            range 0 48
+            help
+                BL0937 CF1 output -> ESP input (voltage or current pulse,
+                selected by SEL).
+
+        config BL0937_SEL_GPIO
+            int "SEL GPIO (output)"
+            default 25 if IDF_TARGET_ESP32
+            default 4
+            range 0 48
+            help
+                BL0937 SEL control <- ESP output.
+                SEL = 1 selects voltage on CF1, SEL = 0 selects current.
+                On ESP32 classic, do not use GPIO 34-39 here (input only).
+
+    endmenu
+
+    menu "Electrical Parameters"
+
+        config BL0937_SHUNT_UOHM
+            int "Shunt value (micro-ohms)"
+            default 1000
+            range 1 100000000
+            help
+                Current shunt resistor value in micro-ohms (uOhm).
+                Example: 1 mOhm = 1000 uOhm.
+
+        config BL0937_V_DIV_RATIO
+            string "Voltage divider ratio (Vpin_rms / Vline_rms)"
+            default "0.00204"
+            help
+                Ratio between the BL0937 voltage input RMS and the mains RMS.
+                Example: a 1:2040 divider is 1/2040 = 0.00049.
+
+        config BL0937_VREF_V
+            string "BL0937 Vref voltage (V)"
+            default "1.218"
+            help
+                Internal reference voltage used in the datasheet formulas.
+                Typical value is 1.218 V.
+
+        config BL0937_SAMPLE_PERIOD_MS
+            int "Measurement period (ms)"
+            default 1000
+            range 100 10000
+            help
+                Full cycle time. Voltage is measured for the first half and
+                current for the second half. A new measurement snapshot is
+                published once per full period.
+
+        config BL0937_SEL_SETTLE_US
+            int "SEL settle time (us)"
+            default 200
+            range 0 5000
+            help
+                Delay after toggling SEL before CF1 pulses are counted again.
+
+        config BL0937_GLITCH_FILTER_NS
+            int "Glitch filter (ns, PCNT only)"
+            default 10000
+            range 0 100000
+            help
+                Pulse glitch filter width in nanoseconds, applied to the PCNT
+                units. Set to 0 to disable. Ignored in ISR fallback mode.
+
+    endmenu
+
+    menu "Calibration"
+
+        config BL0937_VOLTAGE_CAL
+            string "Voltage calibration multiplier"
+            default "1.0"
+            help
+                Raw computed voltage is multiplied by this factor.
+                Determine it per board against a reference meter.
+
+        config BL0937_CURRENT_CAL
+            string "Current calibration multiplier"
+            default "1.0"
+            help
+                Raw computed current is multiplied by this factor.
+
+        config BL0937_POWER_CAL
+            string "Active power calibration multiplier"
+            default "1.0"
+            help
+                Raw computed active power is multiplied by this factor.
+
+        config BL0937_ISR_FALLBACK
+            bool "Force GPIO ISR pulse counting (skip PCNT)"
+            default n
+            help
+                Forces the GPIO interrupt counting path even on targets that
+                have a PCNT peripheral. Useful when all PCNT units are already
+                claimed by other drivers. Costs more CPU at high pulse rates.
+
+    endmenu
+
+    endif # BL0937_ENABLE
+
+endmenu
