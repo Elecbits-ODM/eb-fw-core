@@ -1,0 +1,22 @@
+# Build artifacts
+build/
+managed_components/
+dependencies.lock
+sdkconfig
+sdkconfig.old
+
+# IDE / editor
+.vscode/
+.idea/
+
+# ------------------------------------------------------------------------
+# Certificates
+# ------------------------------------------------------------------------
+# certs/*.pem are intentionally TRACKED in this repo as placeholder files
+# (they contain no real key material — see README.md "Certificate
+# provisioning"). In a real product deployment, once a consuming project
+# swaps these placeholders for a real per-device certificate/key, that
+# project's OWN repo should generally add its own certs/*.pem to
+# .gitignore (or better, inject certs at build time from a secret store
+# rather than committing them at all) so real private keys never end up
+# in version control.
