@@ -23,6 +23,8 @@
 #include "driver/pulse_cnt.h"
 #endif
 
+/*example change - you can remove this comment */
+
 // Datasheet constants (BL0937 V1.02):
 // FCF  = 1721506 * (V(V) * V(I)) / Vref^2
 // FCFU = 15397   * V(V) / Vref
