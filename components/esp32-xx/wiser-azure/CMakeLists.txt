@@ -17,8 +17,8 @@ idf_component_register(
         json
         azure-iot-middleware-freertos
     PRIV_REQUIRES
-        eb_storage
-        eb_network
+        wiser-storage
+        wiser-network
         esp_event
         esp_wifi
         esp-tls

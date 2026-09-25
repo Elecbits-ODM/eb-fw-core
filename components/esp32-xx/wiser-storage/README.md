@@ -1,8 +1,8 @@
-# eb_storage
+# wiser-storage
 
 ## Overview
 
-`eb_storage` is a reusable ESP-IDF component that wraps the raw `nvs_flash` /
+`wiser-storage` is a reusable ESP-IDF component that wraps the raw `nvs_flash` /
 `nvs` APIs behind a small, product-agnostic interface for the kinds of data
 almost every embedded product needs to persist across reboots: WiFi
 credentials, cloud/IoT provisioning state, device identity, X.509
@@ -10,8 +10,8 @@ certificates, and generic key-value data. It exists so that NVS storage
 logic is written once and reused across projects instead of being
 re-implemented per product.
 
-It has no dependency on any other `eb_*` component — `eb_network` and
-`eb_azure` both depend on it, not the other way around.
+It has no dependency on any other `eb_*` component — `wiser-network` and
+`wiser-azure` both depend on it, not the other way around.
 
 ## Supported Platform
 
@@ -38,7 +38,7 @@ It has no dependency on any other `eb_*` component — `eb_network` and
 ## Folder Structure
 
 ```
-eb_storage/
+wiser-storage/
   CMakeLists.txt          Component build script (idf_component_register)
   idf_component.yml       Component manifest
   README.md
@@ -57,13 +57,13 @@ eb_storage/
 
 ## Dependency
 
-None. `eb_storage` only requires ESP-IDF's own `nvs_flash` component
+None. `wiser-storage` only requires ESP-IDF's own `nvs_flash` component
 (declared in `CMakeLists.txt`'s `REQUIRES`). It is the base layer other
 `eb_*` components build on:
 
 ```
-eb_azure  ──depends on──▶  eb_network  ──depends on──▶  eb_storage
-eb_azure  ────────────────depends on───────────────────▶  eb_storage
+wiser-azure  ──depends on──▶  wiser-network  ──depends on──▶  wiser-storage
+wiser-azure  ────────────────depends on───────────────────▶  wiser-storage
 ```
 
 ## Getting Started
@@ -72,12 +72,12 @@ eb_azure  ────────────────depends on────
 
 ```bash
 # Option A — git submodule (auto-discovered under components/)
-git submodule add https://github.com/elecbitstech/eb_storage.git components/eb_storage
+git submodule add https://github.com/elecbitstech/wiser-storage.git components/wiser-storage
 ```
 ```cmake
 # Option B — EXTRA_COMPONENT_DIRS, in your project's top-level CMakeLists.txt,
 # before include($ENV{IDF_PATH}/tools/cmake/project.cmake):
-set(EXTRA_COMPONENT_DIRS "path/to/eb_storage")
+set(EXTRA_COMPONENT_DIRS "path/to/wiser-storage")
 ```
 
 **Use it:**
@@ -108,7 +108,7 @@ void app_main(void)
 idf.py set-target esp32c3
 idf.py build
 ```
-No special Kconfig or partition-size options are needed for `eb_storage` on
+No special Kconfig or partition-size options are needed for `wiser-storage` on
 its own — see `examples/basic_storage_demo` for a complete, minimal project.
 
 ## API Reference
@@ -121,7 +121,7 @@ All declarations live in `include/eb_nvs.h`. Every function returns
 | Type | Fields | Notes |
 |---|---|---|
 | `eb_wifi_credentials_t` | `ssid[33]`, `password[65]`, `configured` | `EB_WIFI_SSID_MAX_LEN`=32, `EB_WIFI_PASSWORD_MAX_LEN`=64 |
-| `eb_azure_config_t` | `scope_id[17]`, `registration_id[65]`, `hub_hostname[129]`, `device_id[65]`, `provisioned` | Cloud/DPS provisioning cache |
+| `wiser-azure_config_t` | `scope_id[17]`, `registration_id[65]`, `hub_hostname[129]`, `device_id[65]`, `provisioned` | Cloud/DPS provisioning cache |
 | `eb_device_identity_t` | `device_id[13]` (12 hex chars + NUL), `mac[6]` | MAC-derived device identity |
 
 Certificate buffers should be sized at least `EB_CERT_MAX_SIZE` /
@@ -147,8 +147,8 @@ Certificate buffers should be sized at least `EB_CERT_MAX_SIZE` /
 
 | Function | Description |
 |---|---|
-| `esp_err_t eb_nvs_save_azure_config(const eb_azure_config_t *config)` | Persists the full DPS/Hub config struct. |
-| `esp_err_t eb_nvs_load_azure_config(eb_azure_config_t *config)` | Loads it back. `ESP_ERR_NOT_FOUND` if unset. |
+| `esp_err_t eb_nvs_save_azure_config(const wiser-azure_config_t *config)` | Persists the full DPS/Hub config struct. |
+| `esp_err_t eb_nvs_load_azure_config(wiser-azure_config_t *config)` | Loads it back. `ESP_ERR_NOT_FOUND` if unset. |
 | `esp_err_t eb_nvs_update_azure_provisioning(const char *hostname, const char *device_id)` | Updates just the hostname + device ID fields after a successful DPS provisioning round, without needing the full struct. |
 | `bool eb_nvs_azure_config_exists(void)` | `true` if a config is stored. |
 | `esp_err_t eb_nvs_erase_azure_config(void)` | Removes the stored cloud config only. |
@@ -206,6 +206,6 @@ Certificate buffers should be sized at least `EB_CERT_MAX_SIZE` /
 
 Elecbits (originally authored by Syed S Mashaam,
 syed.shigarf@elecbits.in). For issues or contributions, open an issue/PR on
-[github.com/elecbitstech/eb_storage](https://github.com/elecbitstech/eb_storage).
+[github.com/elecbitstech/wiser-storage](https://github.com/elecbitstech/wiser-storage).
 
 Currently maintained by Aneesh Madhavan, aneesh.m@elecbits.in.

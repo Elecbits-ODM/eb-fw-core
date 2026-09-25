@@ -22,7 +22,7 @@ idf_component_register(
         mbedtls
         bt
     PRIV_REQUIRES
-        eb_storage
+        wiser-storage
         wifi_provisioning
         protocomm
 )
